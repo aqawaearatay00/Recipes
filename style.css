@@ -1,0 +1,49 @@
+        a.resultLink {
+            display: block;
+            font-size: 22px;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 5px 10px;
+            margin: 5px 0;
+            background-color: rgb(170, 170, 170);
+            color: white !important;
+            border-radius: 5px;
+        }
+
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            font-family: 'YourFont', sans-serif
+        }
+
+        input {
+            padding: 10px;
+            font-size: 18px;
+            width: 250px;
+            margin-bottom: 20px;
+            border-color: #B6B9D3;
+            border-radius: 5px;
+            border-style: double;
+            color: #B6B9D3;
+        }
+
+        ul#results {
+            padding: 0;
+        }
+
+        ul#results li {
+            margin: 5px 0;
+        }
+
+        ul#results a {
+            text-decoration: none;
+            color: #0077cc;
+        }
+
+        @font-face {
+            font-family: 'YourFont';
+            src: url('fonts/SF-Pro-Display-Bold.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
