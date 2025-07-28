@@ -1,20 +1,21 @@
         a.resultLink {
             display: block;
             font-size: 22px;
-            font-weight: bold;
             text-decoration: none;
             padding: 5px 10px;
             margin: 5px 0;
             background-color: rgb(170, 170, 170);
             color: white !important;
             border-radius: 5px;
+            letter-spacing: 1px;
+            font-family: 'light', sans-serif;
         }
 
         body {
-            font-family: sans-serif;
             text-align: center;
             margin-top: 50px;
-            font-family: 'YourFont', sans-serif
+            font-family: 'bold', sans-serif;
+            background-color: #EDECE4;
         }
 
         input {
@@ -25,7 +26,7 @@
             border-color: #B6B9D3;
             border-radius: 5px;
             border-style: double;
-            color: #B6B9D3;
+            color: #60679F;
         }
 
         ul#results {
@@ -42,8 +43,15 @@
         }
 
         @font-face {
-            font-family: 'YourFont';
+            font-family: 'Bold';
             src: url('fonts/SF-Pro-Display-Bold.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Light';
+            src: url('fonts/SF-Pro-Display-Light.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
         }

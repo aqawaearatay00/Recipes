@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'Bold';
+  src: url('fonts/SF-Pro-Display-Bold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Light';
+  src: url('fonts/SF-Pro-Display-Light.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  background-color: #EDECE4;
+  margin: 0;
+  padding: 20px 20px;
+  font-family: 'Light', sans-serif;
+}
+
+h1 {
+  font-size: 35px;
+  color: #60679F;
+  font-family: 'Bold', sans-serif;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 16px;
+  line-height: 24px;
+  margin: 12px 0;
+  color: #333;
+}
+
+br {
+  display: none;
+  /* Optional cleanup */
+}
