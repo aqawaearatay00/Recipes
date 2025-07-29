@@ -1,34 +1,50 @@
-// Search input handler
-document.getElementById('searchInput').addEventListener('input', function () {
-    const query = this.value.trim().toLowerCase();
-    const resultsContainer = document.getElementById('searchResults');
-    resultsContainer.innerHTML = ''; // Clear previous results
+async function getRecipePages() {
+    const timestamp = Date.now(); // 🔥 Unique query string for cache-busting
+    const url = `https://api.github.com/repos/aqawaearatay00/Recipes/contents/recipes?nocache=${timestamp}`;
 
-    // Skip overly short queries to reduce noise
-    if (query.length < 2) return;
+    const response = await fetch(url); // ⚠️ No custom headers to avoid CORS rejection
 
-    // Recipe dataset (can be filenames, titles, etc.)
-    const recipes = [
-        'Chocolate Chip Cookies',
-        'Triple Chocolate Biscotti',
-        'Cheddar Biscuits',
-        'Caramel Apple Pie',
-        'Chili Lime Tacos'
-        // Add your actual list here
-    ];
+    if (!response.ok) {
+        throw new Error(`Failed to fetch recipe list: ${response.status} ${response.statusText}`);
+    }
 
-    // Tokenize and filter by prefix
-    const matches = recipes.filter(recipe => {
-        return recipe
-            .toLowerCase()
-            .split(/[\s\-_,]+/) // split into words
-            .some(word => word.startsWith(query));
+    const files = await response.json();
+
+    return files
+        .filter(f => f.name.endsWith(".html"))
+        .map(f => ({
+            title: f.name.replace(".html", "").replace(/[-_]/g, " "),
+            url: "recipes/" + f.name
+        }));
+}
+
+function capitalizeWords(str) {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+}
+
+getRecipePages().then(pages => {
+    const searchBox = document.getElementById("searchBox");
+    const results = document.getElementById("results");
+
+    searchBox.addEventListener("input", () => {
+        const queryRaw = searchBox.value;
+        const query = queryRaw.trim().toLowerCase();
+
+        results.innerHTML = "";
+        if (query.length === 0) return;
+
+        const matches = pages.filter(p => {
+            const words = p.title.toLowerCase().split(/[\s\-_.,]+/);
+            return words.some(word => word.startsWith(query));
+        });
+
+        searchBox.value = capitalizeWords(queryRaw);
+
+        results.innerHTML = matches.map(p =>
+            `<li><a href="${p.url}" class="resultLink">${capitalizeWords(p.title)}</a></li>`
+        ).join("");
     });
-
-    // Display filtered results
-    matches.forEach(match => {
-        const div = document.createElement('div');
-        div.textContent = match;
-        resultsContainer.appendChild(div);
-    });
+}).catch(err => {
+    console.error("Search setup failed:", err.message);
 });
+
