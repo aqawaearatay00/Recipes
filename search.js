@@ -1,4 +1,4 @@
-const TOKEN = "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"; // Replace with your actual token
+const TOKEN = "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"; // Replace with your actual token
 
 async function getRecipePages(retries = 3) {
     const timestamp = Date.now(); // Bust cache
