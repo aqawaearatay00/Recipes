@@ -1,21 +1,42 @@
-async function getRecipePages() {
-    const timestamp = Date.now(); // 🔥 Unique query string for cache-busting
+const TOKEN = "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"; // Replace with your actual token
+
+async function getRecipePages(retries = 3) {
+    const timestamp = Date.now(); // Bust cache
     const url = `https://api.github.com/repos/aqawaearatay00/Recipes/contents/recipes?nocache=${timestamp}`;
+    const headers = {
+        "Authorization": `Bearer ${TOKEN}`,
+        "Accept": "application/vnd.github.v3+json"
+    };
 
-    const response = await fetch(url); // ⚠️ No custom headers to avoid CORS rejection
+    try {
+        const response = await fetch(url, { headers });
 
-    if (!response.ok) {
-        throw new Error(`Failed to fetch recipe list: ${response.status} ${response.statusText}`);
+        if (response.status === 403 && response.headers.get("X-RateLimit-Remaining") === "0") {
+            const reset = parseInt(response.headers.get("X-RateLimit-Reset")) * 1000;
+            const delay = reset - Date.now();
+            console.warn(`Rate limit hit. Pausing for ${Math.ceil(delay / 1000)}s…`);
+            await new Promise(r => setTimeout(r, delay));
+            return getRecipePages(retries);
+        }
+
+        if (!response.ok) throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+
+        const files = await response.json();
+        return files
+            .filter(f => f.name.endsWith(".html"))
+            .map(f => ({
+                title: f.name.replace(".html", "").replace(/[-_]/g, " "),
+                url: "recipes/" + f.name
+            }))
+            .sort((a, b) => a.title.localeCompare(b.title));
+    } catch (err) {
+        if (retries > 0) {
+            console.warn(`Retrying due to error: ${err.message}`);
+            await new Promise(r => setTimeout(r, 1000));
+            return getRecipePages(retries - 1);
+        }
+        throw err;
     }
-
-    const files = await response.json();
-
-    return files
-        .filter(f => f.name.endsWith(".html"))
-        .map(f => ({
-            title: f.name.replace(".html", "").replace(/[-_]/g, " "),
-            url: "recipes/" + f.name
-        }));
 }
 
 function capitalizeWords(str) {
@@ -25,6 +46,11 @@ function capitalizeWords(str) {
 getRecipePages().then(pages => {
     const searchBox = document.getElementById("searchBox");
     const results = document.getElementById("results");
+    const listAll = document.getElementById("listAll");
+
+    listAll.innerHTML = pages.map(p =>
+        `<li><a href="${p.url}" class="fullListLink">${capitalizeWords(p.title)}</a></li>`
+    ).join("");
 
     searchBox.addEventListener("input", () => {
         const queryRaw = searchBox.value;
