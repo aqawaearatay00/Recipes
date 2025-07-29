@@ -1,42 +1,34 @@
-async function getRecipePages() {
-    const response = await fetch("https://api.github.com/repos/aqawaearatay00/Recipes/contents/recipes");
-    const files = await response.json();
+// Search input handler
+document.getElementById('searchInput').addEventListener('input', function () {
+    const query = this.value.trim().toLowerCase();
+    const resultsContainer = document.getElementById('searchResults');
+    resultsContainer.innerHTML = ''; // Clear previous results
 
-    return files
-        .filter(file => file.name.endsWith(".html"))
-        .map(file => ({
-            title: file.name
-                .replace(".html", "")
-                .replace(/[-_]/g, " "), // normalize for search
-            url: "recipes/" + file.name
-        }));
-}
+    // Skip overly short queries to reduce noise
+    if (query.length < 2) return;
 
-function capitalizeWords(str) {
-    return str.replace(/\b\w/g, char => char.toUpperCase());
-}
+    // Recipe dataset (can be filenames, titles, etc.)
+    const recipes = [
+        'Chocolate Chip Cookies',
+        'Triple Chocolate Biscotti',
+        'Cheddar Biscuits',
+        'Caramel Apple Pie',
+        'Chili Lime Tacos'
+        // Add your actual list here
+    ];
 
-getRecipePages().then(pages => {
-    document.getElementById("searchBox").addEventListener("input", function () {
-        const queryRaw = this.value;
-        const query = queryRaw.toLowerCase();
+    // Tokenize and filter by prefix
+    const matches = recipes.filter(recipe => {
+        return recipe
+            .toLowerCase()
+            .split(/[\s\-_,]+/) // split into words
+            .some(word => word.startsWith(query));
+    });
 
-        if (query.length === 0) {
-            document.getElementById("results").innerHTML = "";
-            return;
-        }
-
-        // Search titles with forgiving lowercase match
-        const matches = pages.filter(p =>
-            p.title.toLowerCase().includes(query)
-        );
-
-        // Capitalize input display
-        this.value = capitalizeWords(queryRaw);
-
-        // Capitalize result titles
-        document.getElementById("results").innerHTML = matches.map(p =>
-            `<li><a href="${p.url}" class="resultLink">${capitalizeWords(p.title)}</a></li>`
-        ).join("");
+    // Display filtered results
+    matches.forEach(match => {
+        const div = document.createElement('div');
+        div.textContent = match;
+        resultsContainer.appendChild(div);
     });
 });
