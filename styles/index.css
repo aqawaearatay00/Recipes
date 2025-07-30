@@ -1,33 +1,50 @@
-/* Universal reset for search result links */
+/* Recipe list container */
+ul#results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Recipe list items */
+ul#results li {
+    list-style-type: none;
+    width: 100%;
+}
+
+/* Link styling with fixed width and ellipsis */
 ul#results a.resultLink,
 #listAll a.resultLink {
-    all: unset;
     display: block;
+    width: 100%;
+    max-width: 500px;
+    /* prevents stretching full width */
     font-size: 22px;
-    text-decoration: none;
     padding: 5px 10px;
-    margin: 5px 0;
+    margin: 5px auto;
     background-color: rgb(170, 170, 170);
     color: white !important;
     border-radius: 5px;
     letter-spacing: 1px;
-    font-family: 'light', sans-serif;
+    font-family: 'Light', sans-serif;
     cursor: pointer;
+    box-sizing: border-box;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
 }
 
-/* Fix broken rule */
-ul#results li {
-    margin: 5px 0;
-    color: #333;
+/* Optional: highlight overflow during debug */
+ul#results a.resultLink:hover {
+    background-color: rgb(120, 120, 120);
 }
 
-/* General link appearance (optional if you use resultLink everywhere) */
-ul#results a {
-    text-decoration: none;
-    color: #0077cc;
-}
-
-/* Input styling */
+/* Other styles unchanged */
 input {
     padding: 10px;
     font-size: 18px;
@@ -39,11 +56,10 @@ input {
     color: #60679F;
 }
 
-/* Typography and layout */
 body {
     text-align: center;
     margin-top: 50px;
-    font-family: 'bold', sans-serif;
+    font-family: 'Bold', sans-serif;
     background-color: #EDECE4;
 }
 
@@ -51,36 +67,26 @@ h3 {
     color: #59619c;
 }
 
-/* List structure */
 ul {
-    list-style-type: none;
     padding-left: 0;
     margin-left: 0;
     font-size: large;
-    text-decoration: none !important;
 }
 
-/* Optional cleanup for basic links */
 #listAll a,
 #results a {
-    all: unset;
     color: #59619c;
     text-decoration: none !important;
     cursor: pointer;
-    display: inline;
 }
 
 /* Custom fonts */
 @font-face {
     font-family: 'Bold';
     src: url('fonts/SF-Pro-Display-Bold.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
 }
 
 @font-face {
     font-family: 'Light';
     src: url('fonts/SF-Pro-Display-Light.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
 }
