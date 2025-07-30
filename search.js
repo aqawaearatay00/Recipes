@@ -1,10 +1,62 @@
+const token = "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";
+const searchInputId = "searchBox";
+const resultsListId = "results";
+const fullListId = "listAll";
+
+// Format title from filename
+function formatTitle(filename) {
+    return filename
+        .replace(".html", "")
+        .replace(/[-_]/g, " ")
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+// Styled box for search results
+function createStyledItem(title, url) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = url;
+    a.textContent = title;
+    li.appendChild(a);
+
+    li.style.backgroundColor = "#c0c0c0ff";
+    li.style.padding = "0.5rem 0.75rem";
+    li.style.marginBottom = "0.5rem";
+    li.style.borderRadius = "6px";
+
+    li.addEventListener("mouseenter", () => {
+        li.style.backgroundColor = "c0c0c0ff";
+    });
+    li.addEventListener("mouseleave", () => {
+        li.style.backgroundColor = "c0c0c0ff";
+    });
+
+    return li;
+}
+
+// Unstyled item for full list
+function createPlainItem(title, url) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = url;
+    a.textContent = title;
+    li.appendChild(a);
+    return li;
+}
+
 async function getRecipePages() {
-    const timestamp = Date.now(); // Bust cache
+    const timestamp = Date.now();
     const url = `https://api.github.com/repos/aqawaearatay00/Recipes/contents/recipes?nocache=${timestamp}`;
 
-    const response = await fetch(url); // No headers to avoid CORS
+    const response = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github.v3+json"
+        }
+    });
+
     if (!response.ok) {
-        throw new Error(`Failed to fetch recipe list: ${response.status} ${response.statusText}`);
+        throw new Error(`Fetch failed: ${response.status} ${response.statusText}`);
     }
 
     const files = await response.json();
@@ -12,45 +64,44 @@ async function getRecipePages() {
     return files
         .filter(f => f.name.endsWith(".html"))
         .map(f => ({
-            title: f.name.replace(".html", "").replace(/[-_]/g, " "),
-            url: "recipes/" + f.name
+            title: formatTitle(f.name),
+            url: `recipes/${f.name}`
         }))
-        .sort((a, b) => a.title.localeCompare(b.title)); // Sort alphabetically
+        .sort((a, b) => a.title.localeCompare(b.title));
 }
 
-function capitalizeWords(str) {
-    return str.replace(/\b\w/g, char => char.toUpperCase());
-}
+async function runSearch() {
+    const input = document.getElementById(searchInputId);
+    const resultsList = document.getElementById(resultsListId);
+    const fullList = document.getElementById(fullListId);
+    const pages = await getRecipePages();
 
-getRecipePages().then(pages => {
-    const searchBox = document.getElementById("searchBox");
-    const results = document.getElementById("results");
-    const listAll = document.getElementById("listAll"); // 📌 Add this container under your search in HTML
+    // Show plain full list once
+    fullList.innerHTML = "";
+    for (const page of pages) {
+        fullList.appendChild(createPlainItem(page.title, page.url));
+    }
 
-    // Render full A-Z list on load
-    listAll.innerHTML = pages.map(p =>
-        `<li><a href="${p.url}" class="fullListLink">${capitalizeWords(p.title)}</a></li>`
-    ).join("");
+    // Search input listener
+    input.addEventListener("input", () => {
+        const query = input.value.trim().toLowerCase();
+        resultsList.innerHTML = "";
 
-    // Wire up search
-    searchBox.addEventListener("input", () => {
-        const queryRaw = searchBox.value;
-        const query = queryRaw.trim().toLowerCase();
+        if (query === "") return;
 
-        results.innerHTML = "";
-        if (query.length === 0) return;
+        const matches = pages.filter(p =>
+            p.title.toLowerCase().split(/\s+/).some(word => word.startsWith(query))
+        );
 
-        const matches = pages.filter(p => {
-            const words = p.title.toLowerCase().split(/[\s\-_.,]+/);
-            return words.some(word => word.startsWith(query));
-        });
-
-        searchBox.value = capitalizeWords(queryRaw);
-
-        results.innerHTML = matches.map(p =>
-            `<li><a href="${p.url}" class="resultLink">${capitalizeWords(p.title)}</a></li>`
-        ).join("");
+        for (const match of matches) {
+            resultsList.appendChild(createStyledItem(match.title, match.url));
+        }
     });
-}).catch(err => {
-    console.error("Search setup failed:", err.message);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    runSearch().catch(err => {
+        const resultsList = document.getElementById(resultsListId);
+        resultsList.innerHTML = `<li style="color: red;">Error: ${err.message}</li>`;
+    });
 });

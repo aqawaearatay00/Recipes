@@ -1,4 +1,4 @@
-/* Recipe list container */
+/* 🍽️ Recipe List Container */
 ul#results {
     display: flex;
     flex-direction: column;
@@ -7,24 +7,25 @@ ul#results {
     max-width: 600px;
     margin: 0 auto;
     padding: 0;
+    box-sizing: border-box;
 }
 
-/* Recipe list items */
+/* 🔗 Individual List Items */
 ul#results li {
     list-style-type: none;
     width: 100%;
+    box-sizing: border-box;
 }
 
-/* Link styling with fixed width and ellipsis */
+/* 🧾 Result Link Styling with Overflow Handling */
 ul#results a.resultLink,
 #listAll a.resultLink {
     display: block;
     width: 100%;
     max-width: 500px;
-    /* prevents stretching full width */
-    font-size: 22px;
-    padding: 5px 10px;
     margin: 5px auto;
+    padding: 5px 10px;
+    font-size: 22px;
     background-color: rgb(170, 170, 170);
     color: white !important;
     border-radius: 5px;
@@ -32,19 +33,15 @@ ul#results a.resultLink,
     font-family: 'Light', sans-serif;
     cursor: pointer;
     box-sizing: border-box;
+    text-align: left;
 
+    /* 👇 Text Truncation Control */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: left;
 }
 
-/* Optional: highlight overflow during debug */
-ul#results a.resultLink:hover {
-    background-color: rgb(120, 120, 120);
-}
-
-/* Other styles unchanged */
+/* 🔍 Input Styling */
 input {
     padding: 10px;
     font-size: 18px;
@@ -56,6 +53,7 @@ input {
     color: #60679F;
 }
 
+/* 🖼️ Page Layout */
 body {
     text-align: center;
     margin-top: 50px;
@@ -67,12 +65,14 @@ h3 {
     color: #59619c;
 }
 
+/* 📋 Generic List Cleanup */
 ul {
     padding-left: 0;
     margin-left: 0;
     font-size: large;
 }
 
+/* 🔗 General Link Cleanup */
 #listAll a,
 #results a {
     color: #59619c;
@@ -80,13 +80,17 @@ ul {
     cursor: pointer;
 }
 
-/* Custom fonts */
+/* 🔤 Custom Fonts */
 @font-face {
     font-family: 'Bold';
     src: url('fonts/SF-Pro-Display-Bold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
     font-family: 'Light';
     src: url('fonts/SF-Pro-Display-Light.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
 }
